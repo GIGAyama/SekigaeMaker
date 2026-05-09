@@ -657,6 +657,13 @@
     .group-badge-9 { background: #90a4ae; }
     .group-badge-10 { background: #ffca28; }
     .group-badge-11 { background: #9575cd; }
+
+    /* 名前の長さに応じてフォントサイズを自動調整（座席幅80pxに収める） */
+    .seat-name-len-3 { font-size: 22px !important; letter-spacing: normal; }
+    .seat-name-len-4 { font-size: 17px !important; letter-spacing: normal; }
+    .seat-name-len-5 { font-size: 14px !important; letter-spacing: -0.5px; }
+    .seat-name-len-6 { font-size: 12px !important; letter-spacing: -0.5px; }
+    .seat-name-len-7 { font-size: 10px !important; letter-spacing: -1px; }
   </style>
 </head>
 
@@ -916,6 +923,11 @@
                   <v-btn elevation="2" x-large color="#0c9ea8" class="demo-btn" dark @click="fetchLocalStorage()"
                     style="font-size: 20px; font-weight: 900; margin-left: 10px; padding-right: 15px;">
                     <v-icon class="icon">mdi-pencil</v-icon>前回の結果を復元
+                  </v-btn>
+                  <!-- 座席配置の保存・呼び出し -->
+                  <v-btn elevation="2" x-large color="#0c9ea8" class="demo-btn" dark @click="openArrangementDialog()"
+                    style="font-size: 20px; font-weight: 900; margin: 8px 0 0 0; padding-right: 15px;">
+                    <v-icon class="icon">mdi-content-save-outline</v-icon>配置の保存・呼び出し
                   </v-btn>
                   <div style="margin-top: 5px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <!-- 利用規約 -->
@@ -1194,24 +1206,24 @@
                     </span>
                     <!-- 1つ目のフォームにプレイスホルダーを設定 -->
                     <input type="text" v-if="indexRow==0 && indexCol==0"
-                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
+                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow), getNameFontClass(seatsTable[indexRow][indexCol])]"
                       @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
                       :key="indexRow.toString() + indexCol.toString()"
-                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
+                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-weight: 600;"
                       :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)" placeholder="安藤">
                     <!-- 2つ目のフォームにプレイスホルダーを設定 -->
                     <input type="text" v-else-if="indexRow==0 && indexCol==1"
-                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
+                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow), getNameFontClass(seatsTable[indexRow][indexCol])]"
                       @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
                       :key="indexRow.toString() + indexCol.toString()"
-                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
+                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-weight: 600;"
                       :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)" placeholder="石原">
                     <!-- 3つ目以降のフォーム -->
                     <input type="text" v-else
-                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
+                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow), getNameFontClass(seatsTable[indexRow][indexCol])]"
                       @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
                       :key="indexRow.toString() + indexCol.toString()"
-                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
+                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-weight: 600;"
                       :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)">
                     <span :class="{'margin-right': (indexCol+1)%groupSizeX==0 && (indexCol+1)!=seatsSizeX}"></span>
                   </span>
@@ -1263,8 +1275,8 @@
                             {{ getGroupNumber(nextIndexCol, nextIndexRow) }}
                           </span>
                           <input type="text" class="sortable-item" readonly
-                            :class="['seat', getColorByName(nextSeatsTable[nextIndexRow][nextIndexCol], 1, 1)]"
-                            style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
+                            :class="['seat', getColorByName(nextSeatsTable[nextIndexRow][nextIndexCol], 1, 1), getNameFontClass(nextSeatsTable[nextIndexRow][nextIndexCol])]"
+                            style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-weight: 600;"
                             :value="nextSeatsTable[nextIndexRow][nextIndexCol]">
                           <v-icon
                             v-if="nextSeatsTable[nextIndexRow][nextIndexCol] && leaderConditions.includes(nextSeatsTable[nextIndexRow][nextIndexCol])"
@@ -1346,6 +1358,66 @@
                 style="font-size: 18px; font-weight: 900; width: 100%;">
                 <v-icon class="icon">mdi-check</v-icon>座席に反映する
               </v-btn>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+
+        <!-- 座席配置の保存・呼び出しダイアログ -->
+        <v-dialog v-model="isShowArrangementDialog" width="640" scrollable>
+          <v-card>
+            <v-card-title class="headline grey lighten-2 font-weight-black" style="display: block;">座席配置の保存・呼び出し
+              <v-icon style="float: right;" @click="isShowArrangementDialog = false">mdi-close</v-icon>
+            </v-card-title>
+            <v-card-text style="margin-top: 20px;">
+              <div v-if="savedNotice" style="background: #e0f7fa; color: #00695c; padding: 8px 12px; border-radius: 6px; margin-bottom: 16px; font-weight: 700;">
+                {{ savedNotice }}
+              </div>
+              <div style="margin-bottom: 8px;">
+                <div style="font-size: 16px; font-weight: 700; color: #333; margin-bottom: 8px;">
+                  <v-icon color="#0c9ea8" small style="margin-right: 4px;">mdi-content-save-outline</v-icon>今の座席を保存する
+                </div>
+                <div style="color: #555555; font-size: 13px; margin-bottom: 8px;">
+                  入力した座席配置に名前をつけて保存できます。座席数・班サイズ・性別・班ごとの色分け設定もまとめて保存されます。
+                </div>
+                <v-text-field v-model="saveArrangementName" label="配置の名前（例：1学期前半）" outlined dense
+                  :error-messages="saveArrangementError" hide-details="auto"
+                  style="margin-bottom: 8px;"></v-text-field>
+                <v-btn elevation="2" color="#0c9ea8" dark @click="saveCurrentArrangement()"
+                  style="font-weight: 700;">
+                  <v-icon class="icon" small>mdi-content-save</v-icon>この内容で保存する
+                </v-btn>
+              </div>
+              <v-divider style="margin: 20px 0;"></v-divider>
+              <div>
+                <div style="font-size: 16px; font-weight: 700; color: #333; margin-bottom: 8px;">
+                  <v-icon color="#0c9ea8" small style="margin-right: 4px;">mdi-folder-open-outline</v-icon>保存した配置を呼び出す
+                </div>
+                <div v-if="savedArrangements.length === 0"
+                  style="color: #888; font-size: 14px; padding: 12px; background: #f5f5f5; border-radius: 6px; text-align: center;">
+                  まだ保存された配置はありません。
+                </div>
+                <v-list v-else style="background: transparent; padding: 0;">
+                  <v-list-item v-for="(arr, arrIndex) in savedArrangements" :key="arr.name + '-' + arrIndex"
+                    style="border: 1px solid #e0e0e0; border-radius: 6px; margin-bottom: 8px; background: #fafafa;">
+                    <v-list-item-content>
+                      <v-list-item-title style="font-weight: 700; font-size: 15px; color: #333;">{{ arr.name }}</v-list-item-title>
+                      <v-list-item-subtitle style="font-size: 12px; color: #777; margin-top: 2px;">
+                        {{ formatSavedAt(arr.savedAt) }} ／ 座席数 {{ arr.seatsSizeX }}×{{ arr.seatsSizeY }}
+                        <span v-if="arr.groupSizeX !== 'なし' && arr.groupSizeY !== 'なし'">／ 班 {{ arr.groupSizeX }}×{{ arr.groupSizeY }}</span>
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-list-item-action style="flex-direction: row; gap: 4px;">
+                      <v-btn small color="#0c9ea8" dark elevation="1" @click="loadArrangement(arr)"
+                        style="font-weight: 700;">
+                        <v-icon small style="margin-right: 4px;">mdi-folder-open</v-icon>呼び出す
+                      </v-btn>
+                      <v-btn small icon @click="deleteArrangement(arrIndex)" title="削除">
+                        <v-icon color="#b71c1c">mdi-delete-outline</v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
+              </div>
             </v-card-text>
           </v-card>
         </v-dialog>
@@ -1510,6 +1582,11 @@
         sidebarWidth: '52%', // PC用のデフォルト値
         seatsTableMemory: [['']],
         genderTableMemory: [['']],
+        savedArrangements: [], // 保存された座席配置の配列
+        isShowArrangementDialog: false, // 配置の保存・呼び出しダイアログ
+        saveArrangementName: '', // 保存時の名前入力
+        saveArrangementError: '', // 保存時のエラーメッセージ
+        savedNotice: '', // 保存・削除完了時のメッセージ
       },
       methods: {
         startTutorial() {
@@ -1673,6 +1750,14 @@
           if (this.leaderConditions.length < numGroups) {
             this.leaderConditions.push('');
           }
+        },
+        getNameFontClass(name) { // 名前の長さに応じてフォントサイズクラスを返す（座席に名前が収まるように）
+          const len = (name || '').length;
+          if (len <= 3) return 'seat-name-len-3';
+          if (len === 4) return 'seat-name-len-4';
+          if (len === 5) return 'seat-name-len-5';
+          if (len === 6) return 'seat-name-len-6';
+          return 'seat-name-len-7';
         },
         getGroupIndex(col, row) { // 座席の班番号（0始まり）を返す。班設定がない場合は -1
           if (this.groupSizeX === 'なし' || this.groupSizeY === 'なし') return -1;
@@ -2375,6 +2460,94 @@
             console.log("LocalStorageに値はありませんでした。");
           }
         },
+        loadSavedArrangements() { // 保存された配置一覧をLocalStorageから読み込む
+          try {
+            const data = localStorage.getItem('savedArrangements');
+            this.savedArrangements = data ? (JSON.parse(data) || []) : [];
+          } catch (e) {
+            this.savedArrangements = [];
+          }
+        },
+        persistSavedArrangements() {
+          localStorage.setItem('savedArrangements', JSON.stringify(this.savedArrangements));
+        },
+        openArrangementDialog() {
+          this.loadSavedArrangements();
+          this.saveArrangementName = '';
+          this.saveArrangementError = '';
+          this.savedNotice = '';
+          this.isShowArrangementDialog = true;
+        },
+        saveCurrentArrangement() { // 「今の座席」を名前付きで保存する
+          const name = (this.saveArrangementName || '').trim();
+          if (!name) {
+            this.saveArrangementError = '名前を入力してください';
+            return;
+          }
+          if (name.length > 30) {
+            this.saveArrangementError = '名前は30文字以内で入力してください';
+            return;
+          }
+          const entry = {
+            name: name,
+            savedAt: new Date().toISOString(),
+            seatsTable: JSON.parse(JSON.stringify(this.seatsTable)),
+            genderTable: JSON.parse(JSON.stringify(this.genderTable)),
+            seatsSizeX: this.seatsSizeX,
+            seatsSizeY: this.seatsSizeY,
+            groupSizeX: this.groupSizeX,
+            groupSizeY: this.groupSizeY,
+            isGroupColorEnabled: this.isGroupColorEnabled
+          };
+          const existing = this.savedArrangements.findIndex(a => a.name === name);
+          if (existing >= 0) {
+            if (!confirm('「' + name + '」はすでに存在します。上書きしますか？')) return;
+            this.savedArrangements.splice(existing, 1, entry);
+          } else {
+            this.savedArrangements.push(entry);
+          }
+          this.persistSavedArrangements();
+          this.saveArrangementName = '';
+          this.saveArrangementError = '';
+          this.savedNotice = '「' + name + '」を保存しました';
+        },
+        loadArrangement(arr) { // 保存された配置を「今の座席」に呼び出す
+          if (!confirm('「' + arr.name + '」を読み込みますか？\n今の座席の入力内容は上書きされます。')) return;
+          this.seatsSizeX = arr.seatsSizeX;
+          this.seatsSizeY = arr.seatsSizeY;
+          this.groupSizeX = arr.groupSizeX;
+          this.groupSizeY = arr.groupSizeY;
+          if (typeof arr.isGroupColorEnabled === 'boolean') {
+            this.isGroupColorEnabled = arr.isGroupColorEnabled;
+          }
+          this.seatsTable = JSON.parse(JSON.stringify(arr.seatsTable));
+          this.genderTable = JSON.parse(JSON.stringify(arr.genderTable));
+          this.countSeats();
+          this.savedNotice = '「' + arr.name + '」を読み込みました';
+          this.isShowArrangementDialog = false;
+        },
+        deleteArrangement(index) { // 保存された配置を削除する
+          const arr = this.savedArrangements[index];
+          if (!arr) return;
+          if (!confirm('「' + arr.name + '」を削除しますか？')) return;
+          this.savedArrangements.splice(index, 1);
+          this.persistSavedArrangements();
+          this.savedNotice = '「' + arr.name + '」を削除しました';
+        },
+        formatSavedAt(iso) { // 保存日時をユーザー向けに整形
+          if (!iso) return '';
+          try {
+            const d = new Date(iso);
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const hh = String(d.getHours()).padStart(2, '0');
+            const mi = String(d.getMinutes()).padStart(2, '0');
+            return yyyy + '/' + mm + '/' + dd + ' ' + hh + ':' + mi;
+          } catch (e) {
+            return '';
+          }
+        },
         setLocalStorage() { // LocalStorageに現在の座席表を書き込む
           localStorage.setItem('seatsTable', JSON.stringify(this.nextSeatsTable, undefined, 1));
           localStorage.setItem('genderTable', JSON.stringify(this.nextGenderTable, undefined, 1));
@@ -2391,6 +2564,7 @@
         this.makeNextSeatsTable(); // 席替え後用のnextSeatsTableを空白で作成
         this.makeGenderTable(); // genderTableを作成
         this.makeNextGenderTable(); // 席替え後用のnextGenderTableを作成
+        this.loadSavedArrangements(); // 保存された配置一覧を読み込む
         this.setSidebarWidth();
         if (window.innerWidth < BREAKPOINT_PC) { // SP・TBのとき
           this.drawer = false; // 初期はサイドバーを非表示
