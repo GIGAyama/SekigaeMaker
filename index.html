@@ -904,7 +904,14 @@
                       <v-checkbox label="今の座席から全員移動させる" v-model="isAllDifferent" hide-details color="#0c9ea8"
                         style="margin:10px 0 0 17px; padding-top: 15px;"></v-checkbox>
                       <v-checkbox label="男女の座席を固定する" v-model="isFixGender" hide-details color="#0c9ea8"
+                        style="margin:10px 0 0 17px;"></v-checkbox>
+                      <v-checkbox label="同じ班の隣同士のペアを変える" v-model="isAvoidSamePair" hide-details color="#0c9ea8"
+                        :disabled="groupSizeX === 'なし' || groupSizeY === 'なし'"
                         style="margin:10px 0 10px 17px; padding-bottom: 15px;"></v-checkbox>
+                      <p v-if="(groupSizeX === 'なし' || groupSizeY === 'なし') && isAvoidSamePair"
+                        style="color: #999; font-size: 12px; margin: 0 17px 10px;">
+                        班サイズを設定すると、ペアの重複を避ける条件が有効になります。
+                      </p>
                     </v-card>
                   </span>
                   <!-- 席替えボタン -->
@@ -1553,6 +1560,8 @@
         nextGenderTable: [], // 席替え後の生徒の性別テーブル、性別が入る二次元配列
         isAllDifferent: true, // 前回の座席と異なる配置にするかどうかの制御フラグ
         isFixGender: true, // 性別を固定するかどうかの制御フラグ
+        isAvoidSamePair: false, // 同じ班の中で隣同士の組み合わせ（横並びペア）を前回と変える制御フラグ
+        previousPairs: null, // 前回の座席（this.seatsTable）の班内・横並びペア集合（changeSeats実行中に使用）
         fixConditions: [['', '', '']], // 近づける条件配列
         leaderConditions: [''], // 班長に指定する生徒名の配列
         disabledStudentsName: [], // 選択肢の中でdisableにする生徒名（行条件用）
@@ -1867,6 +1876,8 @@
         },
         changeSeats() { // メイン処理
           let loopNum = 0; // changeSeats()の処理を指定された回数繰り返す際に制御する変数
+          // 前回（=入力欄の現在の座席）の班内・横並びペアを記録
+          this.previousPairs = this.isAvoidSamePair ? this.getHorizontalPairs(this.seatsTable) : new Set();
           do {
             loopNum += 1;
             console.log(`----${loopNum}回目のループを開始します----`);
@@ -1928,7 +1939,7 @@
           this.shuffle(this.dupSeatsTableIndex); // インデックスをシャッフル
           this.dupStudentsName.forEach(dupStudentName => { // 生徒を一人取り出す
             let topIndex = this.dupSeatsTableIndex.shift(); // シャッフルしたインデックスを格納した配列の先頭を取り出す
-            while ((this.isFixGender && !this.checkGender(dupStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(dupStudentName, topIndex))) { // 条件を満たさない間、繰り返す
+            while ((this.isFixGender && !this.checkGender(dupStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(dupStudentName, topIndex)) || (this.isAvoidSamePair && !this.checkDifferentPair(dupStudentName, topIndex))) { // 条件を満たさない間、繰り返す
               if (this.calcNum > this.seatsNum) {
                 this.restartFlag = true;
                 break;
@@ -1997,7 +2008,7 @@
             if (this.getPositionFromNextSeatsTable(frontStudentName) !== false) return; // 既にplaceLeaders()等で配置済みならスキップ
             let topIndex = this.dupFrontSeatsIndex.shift(); // シャッフルしたインデックスを格納した配列の先頭を取り出す
             // ----近づける/離す/性別/異なる座席チェック----
-            while (!this.checkNear(frontStudentName, topIndex) || !this.checkFar(frontStudentName, topIndex) || (this.isFixGender && !this.checkGender(frontStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(frontStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
+            while (!this.checkNear(frontStudentName, topIndex) || !this.checkFar(frontStudentName, topIndex) || (this.isFixGender && !this.checkGender(frontStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(frontStudentName, topIndex)) || (this.isAvoidSamePair && !this.checkDifferentPair(frontStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
               if (this.calcNum > this.seatsNum) {
                 this.restartFlag = true;
                 break;
@@ -2020,7 +2031,7 @@
             if (this.getPositionFromNextSeatsTable(frontTwoRowsStudentName) !== false) return; // 既にplaceLeaders()等で配置済みならスキップ
             let topIndex = this.dupFrontTwoRowsSeatsIndex.shift(); // シャッフルしたインデックスを格納した配列の先頭を取り出す
             // ----近づける/離す/性別/異なる座席チェック----
-            while (!this.checkNear(frontTwoRowsStudentName, topIndex) || !this.checkFar(frontTwoRowsStudentName, topIndex) || (this.isFixGender && !this.checkGender(frontTwoRowsStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(frontTwoRowsStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
+            while (!this.checkNear(frontTwoRowsStudentName, topIndex) || !this.checkFar(frontTwoRowsStudentName, topIndex) || (this.isFixGender && !this.checkGender(frontTwoRowsStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(frontTwoRowsStudentName, topIndex)) || (this.isAvoidSamePair && !this.checkDifferentPair(frontTwoRowsStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
               if (this.calcNum > this.seatsNum) {
                 this.restartFlag = true;
                 break;
@@ -2042,7 +2053,7 @@
             if (this.getPositionFromNextSeatsTable(backStudentName) !== false) return; // 既にplaceLeaders()等で配置済みならスキップ
             let topIndex = this.dupBackSeatsIndex.shift(); // シャッフルしたインデックスを格納した配列の先頭を取り出す
             // ----近づける/離す/性別/異なる座席チェック----
-            while (!this.checkNear(backStudentName, topIndex) || !this.checkFar(backStudentName, topIndex) || (this.isFixGender && !this.checkGender(backStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(backStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
+            while (!this.checkNear(backStudentName, topIndex) || !this.checkFar(backStudentName, topIndex) || (this.isFixGender && !this.checkGender(backStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(backStudentName, topIndex)) || (this.isAvoidSamePair && !this.checkDifferentPair(backStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
               if (this.calcNum > this.seatsNum) {
                 this.restartFlag = true;
                 break;
@@ -2068,7 +2079,7 @@
             }
             let topIndex = this.dupBackTwoRowsSeatsIndex.shift(); // シャッフルしたインデックスを格納した配列の先頭を取り出す
             // ----近づける/離す/性別/異なる座席チェック----
-            while (!this.checkNear(backTwoRowsStudentName, topIndex) || !this.checkFar(backTwoRowsStudentName, topIndex) || (this.isFixGender && !this.checkGender(backTwoRowsStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(backTwoRowsStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
+            while (!this.checkNear(backTwoRowsStudentName, topIndex) || !this.checkFar(backTwoRowsStudentName, topIndex) || (this.isFixGender && !this.checkGender(backTwoRowsStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(backTwoRowsStudentName, topIndex)) || (this.isAvoidSamePair && !this.checkDifferentPair(backTwoRowsStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
               if (this.calcNum > this.seatsNum) {
                 this.restartFlag = true;
                 break;
@@ -2089,7 +2100,7 @@
           this.dupNearFarStudentsName.forEach(dupNearFarStudentName => {
             let topIndex = this.dupSeatsTableIndex.shift(); // シャッフルしたインデックスを格納した配列の先頭を取り出す
             // ----近づける/離す/性別/異なる座席チェック----
-            while (!this.checkNear(dupNearFarStudentName, topIndex) || !this.checkFar(dupNearFarStudentName, topIndex) || (this.isFixGender && !this.checkGender(dupNearFarStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(dupNearFarStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
+            while (!this.checkNear(dupNearFarStudentName, topIndex) || !this.checkFar(dupNearFarStudentName, topIndex) || (this.isFixGender && !this.checkGender(dupNearFarStudentName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(dupNearFarStudentName, topIndex)) || (this.isAvoidSamePair && !this.checkDifferentPair(dupNearFarStudentName, topIndex))) { // いずれかの条件を満たさない間、繰り返す
               if (this.calcNum > this.seatsNum) {
                 this.restartFlag = true;
                 break;
@@ -2239,7 +2250,7 @@
 
             let topIndex = availableSeats.shift();
             // ----近づける/離す/性別/異なる座席チェック----
-            while (!this.checkNear(leaderName, topIndex) || !this.checkFar(leaderName, topIndex) || (this.isFixGender && !this.checkGender(leaderName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(leaderName, topIndex))) {
+            while (!this.checkNear(leaderName, topIndex) || !this.checkFar(leaderName, topIndex) || (this.isFixGender && !this.checkGender(leaderName, topIndex)) || (this.isAllDifferent && !this.checkDifferent(leaderName, topIndex)) || (this.isAvoidSamePair && !this.checkDifferentPair(leaderName, topIndex))) {
               if (this.calcNum > this.seatsNum || availableSeats.length === 0) {
                 this.restartFlag = true;
                 break;
@@ -2336,6 +2347,46 @@
           } else {
             return true;
           }
+        },
+        makePairKey(a, b) { // 横並びペアを順不同のキー文字列にする
+          return [a, b].sort().join('||');
+        },
+        getHorizontalPairs(table) { // 班ごとの横並びペア集合を返す
+          const pairs = new Set();
+          if (!table || this.groupSizeX === 'なし' || this.groupSizeY === 'なし') return pairs;
+          const gx = Number(this.groupSizeX);
+          if (!gx) return pairs;
+          for (let row = 0; row < table.length; row++) {
+            const r = table[row];
+            if (!r) continue;
+            for (let col = 0; col < r.length - 1; col++) {
+              if (Math.floor(col / gx) !== Math.floor((col + 1) / gx)) continue; // 違う班ならスキップ
+              const a = r[col];
+              const b = r[col + 1];
+              if (!a || !b) continue;
+              pairs.add(this.makePairKey(a, b));
+            }
+          }
+          return pairs;
+        },
+        checkDifferentPair(studentName, p) { // 引数の生徒を座標pに配置したとき、前回の座席で同じ班の隣同士だったペアと一致しないならtrue
+          if (!this.previousPairs || this.previousPairs.size === 0) return true;
+          if (this.groupSizeX === 'なし' || this.groupSizeY === 'なし') return true;
+          const gx = Number(this.groupSizeX);
+          if (!gx) return true;
+          const col = p[0];
+          const row = p[1];
+          // 左隣（同じ班内）
+          if (col > 0 && Math.floor((col - 1) / gx) === Math.floor(col / gx)) {
+            const left = this.nextSeatsTable[row] && this.nextSeatsTable[row][col - 1];
+            if (left && this.previousPairs.has(this.makePairKey(studentName, left))) return false;
+          }
+          // 右隣（同じ班内）
+          if (col < this.seatsSizeX - 1 && Math.floor((col + 1) / gx) === Math.floor(col / gx)) {
+            const right = this.nextSeatsTable[row] && this.nextSeatsTable[row][col + 1];
+            if (right && this.previousPairs.has(this.makePairKey(studentName, right))) return false;
+          }
+          return true;
         },
         getPositionFromNextSeatsTable(studentName) { // 引数の生徒が席替え後座席テーブルにすでにいればその座標を、いなければfalseを返す
           let nextSeatsRowNum = 0; // 行インデックス、y座標
@@ -2444,6 +2495,7 @@
           let groupSizeYLocalStorage = JSON.parse(localStorage.getItem('groupSizeY'));
           let groupSizeXLocalStorage = JSON.parse(localStorage.getItem('groupSizeX'));
           let isGroupColorEnabledLocalStorage = JSON.parse(localStorage.getItem('isGroupColorEnabled'));
+          let isAvoidSamePairLocalStorage = JSON.parse(localStorage.getItem('isAvoidSamePair'));
 
           if (seatsTableLocalStorage && genderTableLocalStorage && seatsSizeYLocalStorage && seatsSizeXLocalStorage && groupSizeYLocalStorage && groupSizeXLocalStorage) {
             console.log("LocalStorageに値があったので反映させました。");
@@ -2455,6 +2507,9 @@
             this.groupSizeX = groupSizeXLocalStorage;
             if (isGroupColorEnabledLocalStorage !== null) {
               this.isGroupColorEnabled = isGroupColorEnabledLocalStorage;
+            }
+            if (isAvoidSamePairLocalStorage !== null) {
+              this.isAvoidSamePair = isAvoidSamePairLocalStorage;
             }
           } else {
             console.log("LocalStorageに値はありませんでした。");
@@ -2556,6 +2611,7 @@
           localStorage.setItem('groupSizeX', JSON.stringify(this.groupSizeX, undefined, 1));
           localStorage.setItem('groupSizeY', JSON.stringify(this.groupSizeY, undefined, 1));
           localStorage.setItem('isGroupColorEnabled', JSON.stringify(this.isGroupColorEnabled, undefined, 1));
+          localStorage.setItem('isAvoidSamePair', JSON.stringify(this.isAvoidSamePair, undefined, 1));
           console.log('LocalStorageに値を書き込みました。');
         },
       },
