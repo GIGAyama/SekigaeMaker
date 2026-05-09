@@ -436,6 +436,227 @@
       min-width: 400px;
       max-width: 400px;
     }
+
+    /* === 教室レイアウト === */
+    .classroom {
+      display: grid;
+      grid-template-columns: 34px auto 34px;
+      grid-template-rows: 42px auto 38px;
+      grid-template-areas:
+        "blackboard blackboard blackboard"
+        "window     desks      doors"
+        "lockers    lockers    lockers";
+      gap: 8px;
+      width: max-content;
+      margin: 0 auto;
+      padding: 12px;
+      background: #fbf3df;
+      background-image:
+        linear-gradient(180deg, rgba(255, 255, 255, 0) 0, rgba(0, 0, 0, 0.04) 100%),
+        repeating-linear-gradient(90deg, #f7ebcf 0 60px, #f3e3bd 60px 120px);
+      border: 2px solid #b89b6b;
+      border-radius: 10px;
+    }
+
+    .classroom-blackboard {
+      grid-area: blackboard;
+      background: linear-gradient(180deg, #2c5d3f 0%, #1f4a30 100%);
+      color: #f5f5dc;
+      border: 5px solid #8b6239;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 12px;
+      text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.08);
+      font-family: 'Yu Gothic', 'Hiragino Kaku Gothic ProN', sans-serif;
+    }
+
+    .classroom-window {
+      grid-area: window;
+      background: linear-gradient(180deg, #d6ecf7 0%, #b8dcf0 50%, #d6ecf7 100%);
+      border: 3px solid #b89b6b;
+      border-radius: 4px;
+      position: relative;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #5c7a8c;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .classroom-window::before,
+    .classroom-window::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #b89b6b;
+    }
+
+    .classroom-window::before {
+      top: 33%;
+    }
+
+    .classroom-window::after {
+      top: 66%;
+    }
+
+    .classroom-doors {
+      grid-area: doors;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .classroom-door {
+      flex: 1;
+      background: linear-gradient(180deg, #c89568 0%, #a87044 100%);
+      border: 3px solid #6b4226;
+      border-radius: 4px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff8e7;
+      font-size: 11px;
+      font-weight: 700;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    .classroom-door::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ffd970;
+      box-shadow: 0 0 0 1px #6b4226;
+      transform: translateY(-50%);
+    }
+
+    .classroom-lockers {
+      grid-area: lockers;
+      background: linear-gradient(180deg, #b07a4a 0%, #8a5a32 100%);
+      border: 3px solid #5a3c20;
+      border-radius: 4px;
+      display: flex;
+      align-items: stretch;
+      padding: 3px;
+      gap: 3px;
+      position: relative;
+    }
+
+    .classroom-locker-cell {
+      flex: 1;
+      background: linear-gradient(180deg, #c98e5e 0%, #a67042 100%);
+      border-radius: 2px;
+      border: 1px solid #5a3c20;
+      position: relative;
+    }
+
+    .classroom-locker-cell::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 60%;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #2b1a0a;
+      transform: translate(-50%, -50%);
+    }
+
+    .classroom-lockers-label {
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #fff8e7;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
+
+    .classroom-desks {
+      grid-area: desks;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 机のセル（座席1つを包む） */
+    .desk-cell {
+      display: inline-block;
+      position: relative;
+      vertical-align: top;
+      padding: 3px;
+      border-radius: 8px;
+      margin-right: -4px;
+      box-sizing: border-box;
+    }
+
+    /* 班ごとの色分け（背景） */
+    .group-tone-0 { background: rgba(255, 205, 210, 0.55); box-shadow: inset 0 0 0 2px #e57373; }
+    .group-tone-1 { background: rgba(187, 222, 251, 0.55); box-shadow: inset 0 0 0 2px #64b5f6; }
+    .group-tone-2 { background: rgba(200, 230, 201, 0.55); box-shadow: inset 0 0 0 2px #81c784; }
+    .group-tone-3 { background: rgba(255, 245, 157, 0.55); box-shadow: inset 0 0 0 2px #fdd835; }
+    .group-tone-4 { background: rgba(225, 190, 231, 0.55); box-shadow: inset 0 0 0 2px #ba68c8; }
+    .group-tone-5 { background: rgba(255, 224, 178, 0.55); box-shadow: inset 0 0 0 2px #ffb74d; }
+    .group-tone-6 { background: rgba(248, 187, 208, 0.55); box-shadow: inset 0 0 0 2px #f06292; }
+    .group-tone-7 { background: rgba(178, 235, 242, 0.55); box-shadow: inset 0 0 0 2px #4dd0e1; }
+    .group-tone-8 { background: rgba(220, 237, 200, 0.55); box-shadow: inset 0 0 0 2px #aed581; }
+    .group-tone-9 { background: rgba(207, 216, 220, 0.55); box-shadow: inset 0 0 0 2px #90a4ae; }
+    .group-tone-10 { background: rgba(255, 236, 179, 0.55); box-shadow: inset 0 0 0 2px #ffca28; }
+    .group-tone-11 { background: rgba(209, 196, 233, 0.55); box-shadow: inset 0 0 0 2px #9575cd; }
+
+    /* 班番号バッジ */
+    .group-badge {
+      position: absolute;
+      top: -7px;
+      left: -7px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      z-index: 2;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .group-badge-0 { background: #e57373; }
+    .group-badge-1 { background: #64b5f6; }
+    .group-badge-2 { background: #81c784; }
+    .group-badge-3 { background: #fbc02d; }
+    .group-badge-4 { background: #ba68c8; }
+    .group-badge-5 { background: #ffb74d; }
+    .group-badge-6 { background: #f06292; }
+    .group-badge-7 { background: #4dd0e1; }
+    .group-badge-8 { background: #aed581; }
+    .group-badge-9 { background: #90a4ae; }
+    .group-badge-10 { background: #ffca28; }
+    .group-badge-11 { background: #9575cd; }
   </style>
 </head>
 
@@ -516,6 +737,14 @@
                               style="width: 90px;" class="inline-block"></v-select>
                           </div>
                         </div>
+                        <v-checkbox label="班ごとに色分けして表示する" v-model="isGroupColorEnabled" hide-details
+                          color="#0c9ea8"
+                          :disabled="groupSizeX === 'なし' || groupSizeY === 'なし'"
+                          style="margin-top: 0; padding-top: 0;"></v-checkbox>
+                        <p v-if="groupSizeX === 'なし' || groupSizeY === 'なし'"
+                          style="color: #999; font-size: 12px; margin: 4px 0 0;">
+                          班サイズを設定すると、班ごとに色分けして表示できます。
+                        </p>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
@@ -948,33 +1177,52 @@
             </v-tooltip>
           </v-card-title>
           <div class="seats-scroll-container">
-            <li v-for="( seats, indexRow ) in seatsTable" style="margin-left: -4px;">
-              <span v-for="( seat, indexCol ) in seats" class="minus-margin-right">
-                <!-- 1つ目のフォームにプレイスホルダーを設定 -->
-                <input type="text" v-if="indexRow==0 && indexCol==0"
-                  :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
-                  @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
-                  :key="indexRow.toString() + indexCol.toString()"
-                  style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
-                  :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)" placeholder="安藤">
-                <!-- 2つ目のフォームにプレイスホルダーを設定 -->
-                <input type="text" v-else-if="indexRow==0 && indexCol==1"
-                  :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
-                  @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
-                  :key="indexRow.toString() + indexCol.toString()"
-                  style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
-                  :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)" placeholder="石原">
-                <!-- 3つ目以降のフォーム -->
-                <input type="text" v-else
-                  :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
-                  @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
-                  :key="indexRow.toString() + indexCol.toString()"
-                  style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
-                  :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)">
-                <span :class="{'margin-right': (indexCol+1)%groupSizeX==0 && (indexCol+1)!=seatsSizeX}"></span>
-              </span>
-              <div :class="{'margin-bottom': (indexRow+1)%groupSizeY==0}"></div>
-            </li>
+            <div class="classroom">
+              <div class="classroom-blackboard">こくばん</div>
+              <div class="classroom-window">まど</div>
+              <div class="classroom-doors">
+                <div class="classroom-door">まえのとびら</div>
+                <div class="classroom-door">うしろのとびら</div>
+              </div>
+              <ul class="classroom-desks">
+                <li v-for="( seats, indexRow ) in seatsTable" style="margin-left: -4px;">
+                  <span v-for="( seat, indexCol ) in seats"
+                    :class="['desk-cell', isGroupColorEnabled ? getGroupToneClass(indexCol, indexRow) : '']">
+                    <span v-if="isGroupColorEnabled && isGroupTopLeftCell(indexCol, indexRow)"
+                      :class="['group-badge', getGroupBadgeClass(indexCol, indexRow)]">
+                      {{ getGroupNumber(indexCol, indexRow) }}
+                    </span>
+                    <!-- 1つ目のフォームにプレイスホルダーを設定 -->
+                    <input type="text" v-if="indexRow==0 && indexCol==0"
+                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
+                      @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
+                      :key="indexRow.toString() + indexCol.toString()"
+                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
+                      :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)" placeholder="安藤">
+                    <!-- 2つ目のフォームにプレイスホルダーを設定 -->
+                    <input type="text" v-else-if="indexRow==0 && indexCol==1"
+                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
+                      @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
+                      :key="indexRow.toString() + indexCol.toString()"
+                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
+                      :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)" placeholder="石原">
+                    <!-- 3つ目以降のフォーム -->
+                    <input type="text" v-else
+                      :class="['seat', getColorByName(seatsTable[indexRow][indexCol], indexCol, indexRow)]"
+                      @input="writeStudentName( indexCol, indexRow, $event.target.value ); countSeats();"
+                      :key="indexRow.toString() + indexCol.toString()"
+                      style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
+                      :value="seatsTable[indexRow][indexCol]" @click="toggleGender(indexCol,indexRow)">
+                    <span :class="{'margin-right': (indexCol+1)%groupSizeX==0 && (indexCol+1)!=seatsSizeX}"></span>
+                  </span>
+                  <div :class="{'margin-bottom': (indexRow+1)%groupSizeY==0}"></div>
+                </li>
+              </ul>
+              <div class="classroom-lockers">
+                <span class="classroom-lockers-label">ロッカー</span>
+                <div class="classroom-locker-cell" v-for="n in Math.max(seatsSizeX, 4)" :key="'locker-cur-' + n"></div>
+              </div>
+            </div>
           </div>
           <div class="card-bottom"></div>
         </v-card>
@@ -996,28 +1244,46 @@
           </v-card-title>
           <template v-if="isRenderNextSeatsTable">
             <div class="center seats-scroll-container">
-              <transition-group name="transition-item" type="transition">
-                <template v-for="( nextSeats, nextIndexRow ) in nextSeatsTable">
-                  <template v-for="( nextSeat, nextIndexCol ) in nextSeats">
-                    <span :id="'nextSeatsRow-' + nextIndexRow + '-' + nextIndexCol"
-                      class="sortable-item transition-item square minus-margin-bottom"
-                      :key="uniqueKey(nextSeat, nextIndexRow, nextIndexCol)" style="position: relative;">
-                      <input type="text" class="sortable-item" readonly
-                        :class="['seat', getColorByName(nextSeatsTable[nextIndexRow][nextIndexCol], 1, 1)]"
-                        style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
-                        :value="nextSeatsTable[nextIndexRow][nextIndexCol]">
-                      <v-icon
-                        v-if="nextSeatsTable[nextIndexRow][nextIndexCol] && leaderConditions.includes(nextSeatsTable[nextIndexRow][nextIndexCol])"
-                        color="#F9A825"
-                        style="position: absolute; top: 4px; left: 4px; font-size: 24px;">mdi-star</v-icon>
-                    </span>
-                    <span :class="{'margin-right': (nextIndexCol+1)%groupSizeX==0 && (nextIndexCol+1)!=seatsSizeX}"
-                      :key="'nextSeatsSpan' + (nextIndexRow*seatsSizeX+nextIndexCol)"></span>
-                  </template>
-                  <div :class="{'margin-bottom': (nextIndexRow+1)%groupSizeY==0}"
-                    :key="'nextSeatsDiv' + (nextIndexRow)"></div>
-                </template>
-              </transition-group>
+              <div class="classroom">
+                <div class="classroom-blackboard">こくばん</div>
+                <div class="classroom-window">まど</div>
+                <div class="classroom-doors">
+                  <div class="classroom-door">まえのとびら</div>
+                  <div class="classroom-door">うしろのとびら</div>
+                </div>
+                <div class="classroom-desks">
+                  <transition-group name="transition-item" type="transition">
+                    <template v-for="( nextSeats, nextIndexRow ) in nextSeatsTable">
+                      <template v-for="( nextSeat, nextIndexCol ) in nextSeats">
+                        <span :id="'nextSeatsRow-' + nextIndexRow + '-' + nextIndexCol"
+                          :class="['sortable-item', 'transition-item', 'desk-cell', isGroupColorEnabled ? getGroupToneClass(nextIndexCol, nextIndexRow) : '']"
+                          :key="uniqueKey(nextSeat, nextIndexRow, nextIndexCol)">
+                          <span v-if="isGroupColorEnabled && isGroupTopLeftCell(nextIndexCol, nextIndexRow)"
+                            :class="['group-badge', getGroupBadgeClass(nextIndexCol, nextIndexRow)]">
+                            {{ getGroupNumber(nextIndexCol, nextIndexRow) }}
+                          </span>
+                          <input type="text" class="sortable-item" readonly
+                            :class="['seat', getColorByName(nextSeatsTable[nextIndexRow][nextIndexCol], 1, 1)]"
+                            style="text-align: center;  resize: none; word-break: keep-all; vertical-align: top; font-size: 22px; font-weight: 600;"
+                            :value="nextSeatsTable[nextIndexRow][nextIndexCol]">
+                          <v-icon
+                            v-if="nextSeatsTable[nextIndexRow][nextIndexCol] && leaderConditions.includes(nextSeatsTable[nextIndexRow][nextIndexCol])"
+                            color="#F9A825"
+                            style="position: absolute; top: 4px; right: 4px; font-size: 24px;">mdi-star</v-icon>
+                        </span>
+                        <span :class="{'margin-right': (nextIndexCol+1)%groupSizeX==0 && (nextIndexCol+1)!=seatsSizeX}"
+                          :key="'nextSeatsSpan' + (nextIndexRow*seatsSizeX+nextIndexCol)"></span>
+                      </template>
+                      <div :class="{'margin-bottom': (nextIndexRow+1)%groupSizeY==0}"
+                        :key="'nextSeatsDiv' + (nextIndexRow)"></div>
+                    </template>
+                  </transition-group>
+                </div>
+                <div class="classroom-lockers">
+                  <span class="classroom-lockers-label">ロッカー</span>
+                  <div class="classroom-locker-cell" v-for="n in Math.max(seatsSizeX, 4)" :key="'locker-next-' + n"></div>
+                </div>
+              </div>
             </div>
           </template>
           <div class="card-bottom"></div>
@@ -1223,6 +1489,7 @@
         groupSizeY: 3,
         groupSizeOptionsX: ['なし', 2, 3],
         groupSizeOptionsY: ['なし', 2, 3],
+        isGroupColorEnabled: false, // 班ごとに色分けして表示するかどうかの制御フラグ
         isRenderNextSeatsTable: true, // nextSeatsTableを表示するかどうかの制御フラグ
         drawer: true, // 条件サイドバーの開閉制御フラグ
         isOpenSeatNumPanel: 0, // 座席数を指定するエクスパンションパネルの開閉フラグ、指定したIDのパネルを開く
@@ -1406,6 +1673,37 @@
           if (this.leaderConditions.length < numGroups) {
             this.leaderConditions.push('');
           }
+        },
+        getGroupIndex(col, row) { // 座席の班番号（0始まり）を返す。班設定がない場合は -1
+          if (this.groupSizeX === 'なし' || this.groupSizeY === 'なし') return -1;
+          const gx = Number(this.groupSizeX);
+          const gy = Number(this.groupSizeY);
+          if (!gx || !gy) return -1;
+          const groupCol = Math.floor(col / gx);
+          const groupRow = Math.floor(row / gy);
+          const groupsPerRow = Math.ceil(this.seatsSizeX / gx);
+          return groupRow * groupsPerRow + groupCol;
+        },
+        getGroupNumber(col, row) { // 座席の班番号（1始まり）を返す
+          const idx = this.getGroupIndex(col, row);
+          return idx < 0 ? '' : idx + 1;
+        },
+        getGroupToneClass(col, row) { // 班ごとの背景色クラス
+          const idx = this.getGroupIndex(col, row);
+          if (idx < 0) return '';
+          return 'group-tone-' + (idx % 12);
+        },
+        getGroupBadgeClass(col, row) { // 班番号バッジの色クラス
+          const idx = this.getGroupIndex(col, row);
+          if (idx < 0) return '';
+          return 'group-badge-' + (idx % 12);
+        },
+        isGroupTopLeftCell(col, row) { // 班の左上の座席かどうか（バッジ表示用）
+          if (this.groupSizeX === 'なし' || this.groupSizeY === 'なし') return false;
+          const gx = Number(this.groupSizeX);
+          const gy = Number(this.groupSizeY);
+          if (!gx || !gy) return false;
+          return (col % gx === 0) && (row % gy === 0);
         },
         getColorByName(studentName, col, row) { // 座席の種類に応じた色を返す
           let genderIndex = this.studentsName.indexOf(studentName); // 生徒名に対応する性別を取得
@@ -2060,6 +2358,7 @@
           let seatsSizeXLocalStorage = JSON.parse(localStorage.getItem('seatsSizeX'));
           let groupSizeYLocalStorage = JSON.parse(localStorage.getItem('groupSizeY'));
           let groupSizeXLocalStorage = JSON.parse(localStorage.getItem('groupSizeX'));
+          let isGroupColorEnabledLocalStorage = JSON.parse(localStorage.getItem('isGroupColorEnabled'));
 
           if (seatsTableLocalStorage && genderTableLocalStorage && seatsSizeYLocalStorage && seatsSizeXLocalStorage && groupSizeYLocalStorage && groupSizeXLocalStorage) {
             console.log("LocalStorageに値があったので反映させました。");
@@ -2069,6 +2368,9 @@
             this.seatsSizeX = seatsSizeXLocalStorage;
             this.groupSizeY = groupSizeYLocalStorage;
             this.groupSizeX = groupSizeXLocalStorage;
+            if (isGroupColorEnabledLocalStorage !== null) {
+              this.isGroupColorEnabled = isGroupColorEnabledLocalStorage;
+            }
           } else {
             console.log("LocalStorageに値はありませんでした。");
           }
@@ -2080,6 +2382,7 @@
           localStorage.setItem('seatsSizeY', JSON.stringify(this.seatsSizeY, undefined, 1));
           localStorage.setItem('groupSizeX', JSON.stringify(this.groupSizeX, undefined, 1));
           localStorage.setItem('groupSizeY', JSON.stringify(this.groupSizeY, undefined, 1));
+          localStorage.setItem('isGroupColorEnabled', JSON.stringify(this.isGroupColorEnabled, undefined, 1));
           console.log('LocalStorageに値を書き込みました。');
         },
       },
