@@ -1,0 +1,54 @@
+# =====================================================================
+# ci.yml — このリポジトリの最低限の点検
+# =====================================================================
+# 席替えの計算は index.html の中に直接書かれていて、外に出した .js は無い。
+# そのため構文検査で見られるものが少ない。それでも次の 2 つは見ておきたい。
+#
+#   1. syntax — manifest.json / package.json が JSON として読めるか。
+#      壊れると PWA として入らなくなるが、画面には何も出ない。
+#   2. drift  — 配られたスキルが正本からずれていないか。
+#
+# ⚠️ Playwright のテスト（test.yml、30 件）はここでは呼んでいない。
+#    別のワークフローとして登録されているが、**一度も走った記録が無い**
+#    （2026-08-25 時点で実行 0 回）。走らないまま重ねても意味がないので、
+#    まずこちらを動かして、Actions そのものが動くことを確かめる。
+#
+# ⚠️ 既定ブランチは master（ほかのリポジトリは main）。
+# =====================================================================
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: JSON が読めるか
+        run: |
+          set -e
+          for f in manifest.json package.json; do
+            [ -e "$f" ] || continue
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('$f ok')"
+          done
+
+  # 配られたスキル（.claude/skills/）が正本からずれていないか。
+  # 正本は GIGAyama.github.io/standards/ にあり、そこを checkout して直に照合する。
+  # 実行時の依存は増えない（このリポジトリには何も足さない）。
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: GIGAyama/GIGAyama.github.io
+          path: .standards-src
+      - name: 正本とのずれ検知
+        run: node .standards-src/standards/check-drift.mjs --standards .standards-src/standards
