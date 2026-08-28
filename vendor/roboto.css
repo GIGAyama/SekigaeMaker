@@ -1,0 +1,41 @@
+/* ==========================================================================
+ * Roboto
+ * Roboto — Apache License 2.0（全文は vendor/fonts/LICENSE.txt）
+ *
+ * このファイルは tools/fonts/build-fonts.mjs が生成する。**直接編集しないこと。**
+ * 作り直すには: node tools/fonts/build-fonts.mjs
+ *
+ * unicode-range は Google Fonts が返した値をそのまま使っている。ここに無い字
+ * （児童が入力した珍しい漢字など）は、このフォントを飛ばして端末内蔵フォントへ
+ * 落ちる。書体が変わるだけで、□（豆腐）にはならない。
+ *
+ * 面が複数あるのは、1 リクエストに載せられる字数に上限があるため。
+ * ブラウザは unicode-range を見て、実際に要る面だけを取りにいく。
+ * ========================================================================== */
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/roboto-400-1.woff2') format('woff2');
+  unicode-range: U+20-7e, U+2010, U+2015, U+2025-2026, U+2032-2033, U+203b, U+2103, U+2190-2193, U+25a0-25a1, U+25b2-25b3, U+25cb, U+25ce-25cf, U+2605-2606, U+2661, U+266a, U+2713, U+2715, U+3001-3002, U+3008-3011, U+3014-3015, U+301c, U+3041-30ff, U+ff01-ff5e, U+ffe5;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./fonts/roboto-500-1.woff2') format('woff2');
+  unicode-range: U+20-7e, U+2010, U+2015, U+2025-2026, U+2032-2033, U+203b, U+2103, U+2190-2193, U+25a0-25a1, U+25b2-25b3, U+25cb, U+25ce-25cf, U+2605-2606, U+2661, U+266a, U+2713, U+2715, U+3001-3002, U+3008-3011, U+3014-3015, U+301c, U+3041-30ff, U+ff01-ff5e, U+ffe5;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/roboto-700-1.woff2') format('woff2');
+  unicode-range: U+20-7e, U+2010, U+2015, U+2025-2026, U+2032-2033, U+203b, U+2103, U+2190-2193, U+25a0-25a1, U+25b2-25b3, U+25cb, U+25ce-25cf, U+2605-2606, U+2661, U+266a, U+2713, U+2715, U+3001-3002, U+3008-3011, U+3014-3015, U+301c, U+3041-30ff, U+ff01-ff5e, U+ffe5;
+}

@@ -1,0 +1,20 @@
+{
+  "//": "書体の取りこみ方。作り直すには npm run build:fonts（ネットが要る）。Roboto は Vuetify が使う欧文書体で、日本語は端末側のゴシックに落ちる（もとから同じ）",
+  "family": "Roboto",
+  "weights": [
+    400,
+    500,
+    700
+  ],
+  "grades": [],
+  "extra": "",
+  "scan": [],
+  "outDir": "vendor/fonts",
+  "cssPath": "vendor/roboto.css",
+  "hrefPrefix": "./fonts/",
+  "generator": "tools/fonts/build-fonts.mjs",
+  "license": "Roboto — Apache License 2.0（全文は vendor/fonts/LICENSE.txt）",
+  "copyright": "Copyright 2011 Google Inc. All Rights Reserved.",
+  "oflPath": "vendor/fonts/LICENSE.txt",
+  "licenseId": "Apache-2.0"
+}

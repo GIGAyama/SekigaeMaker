@@ -1,0 +1,21 @@
+{
+  "//": "ライブラリの取りこみ方。版は package.json で固定する。作り直すには npm run build。静的アプリなので .html に包まず素のまま出す（wrap: none）",
+  "generator": "tools/vendor/build-vendor.mjs",
+  "wrap": "none",
+  "scan": ["index.html"],
+  "targets": [
+    { "out": "vendor/vuetify.css", "css": ["vuetify/dist/vuetify.min.css"] },
+    { "out": "vendor/introjs.css", "css": ["intro.js/minified/introjs.min.css"] },
+    { "out": "vendor/mdi-icons.css", "icons": "@mdi/svg" },
+    {
+      "out": "vendor/libs.js",
+      "js": [
+        "vue/dist/vue.min.js",
+        "vuetify/dist/vuetify.min.js",
+        "sortablejs/Sortable.min.js",
+        "lodash/lodash.min.js",
+        "intro.js/minified/intro.min.js"
+      ]
+    }
+  ]
+}

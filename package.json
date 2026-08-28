@@ -4,12 +4,24 @@
   "description": "[![Vue](https://img.shields.io/badge/Vue-v2.7.15-%2342b77c)](https://www.npmjs.com/package/vue/v/2.7.15) [![Netlify Status](https://api.netlify.com/api/v1/badges/1789b738-3cc0-4887-b1ad-2790e8b91721/deploy-status)](https://app.netlify.com/sites/sekigae/deploys)",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test"
+    "test": "npx playwright test",
+    "build": "node tools/vendor/build-vendor.mjs",
+    "build:fonts": "node tools/fonts/build-fonts.mjs",
+    "verify": "node tools/vendor/verify-generated.mjs",
+    "ci": "npm run build && npm run verify"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.58.2"
+  },
+  "dependencies": {
+    "@mdi/svg": "^4.9.95",
+    "intro.js": "3.3.1",
+    "lodash": "4.14.1",
+    "sortablejs": "1.15.6",
+    "vue": "2.7.16",
+    "vuetify": "2.7.2"
   }
 }
