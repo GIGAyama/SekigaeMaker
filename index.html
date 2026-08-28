@@ -35,14 +35,25 @@
   <meta name="twitter:site" content="@krpk1900_dev">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="canonical" href="https://sekigae.jp/">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.9.95/css/materialdesignicons.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.7.2/dist/vuetify.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/3.3.1/introjs.min.css" rel="stylesheet" type="text/css">
+  <!--
+    === ライブラリと書体（すべて自己ホスト）===
+    生成物です。作り直すには npm ci && npm run build（書体は npm run build:fonts）。
+    版は package.json で固定してあり、もとと同じものを取りこんでいます。
+
+    ⚠️ ここに CDN への <link> / <script> を戻さないこと。
+       学校のフィルタが塞ぐと、白い画面ではなく「Vuetify が当たっていない
+       素の HTML が半分だけ動く」形で壊れます。先生からは「壊れている」としか
+       見えず、原因はアプリの外にあるので調べても分かりません。
+
+    ⚠️ アイコンは webfont ではなく、使っている 22 種類の SVG を mask-image に
+       しています（@mdi/font 全部だと 1MB 近くになるため）。
+       新しい mdi-* を画面に足したら npm run build を走らせ直してください。
+       走らせ忘れると、その画面のアイコンだけが消えます（npm run verify が止めます）。
+  -->
+  <link href="./vendor/roboto.css" rel="stylesheet">
+  <link href="./vendor/mdi-icons.css" rel="stylesheet">
+  <link href="./vendor/vuetify.css" rel="stylesheet">
+  <link href="./vendor/introjs.css" rel="stylesheet" type="text/css">
   <!-- 構造化データ: WebApplication -->
   <script type="application/ld+json">
   {
@@ -1478,11 +1489,8 @@
     </v-app>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.7.2/dist/vuetify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/intro.js@3.3.1/intro.min.js"></script>
+  <!-- Vue / Vuetify / Sortable / lodash / intro.js（自己ホスト。1 本にまとめてある） -->
+  <script src="./vendor/libs.js"></script>
 
   <script>
     // ブレークポイント定数
